@@ -7,3 +7,5 @@ https://www.youtube.com/watch?v=8QtQCLknvg8
 Rust For Beginners: Let's Build A Trading Engine EP2
 https://www.youtube.com/watch?v=t-kjP9QXo28
 
+Rust For Beginners: Let's Build A Trading Engine EP3
+https://www.youtube.com/watch?v=xjk23r79Flk
