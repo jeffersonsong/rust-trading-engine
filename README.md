@@ -9,3 +9,6 @@ https://www.youtube.com/watch?v=t-kjP9QXo28
 
 Rust For Beginners: Let's Build A Trading Engine EP3
 https://www.youtube.com/watch?v=xjk23r79Flk
+
+Rust For Beginners: Let's Build A Trading Engine EP4
+https://www.youtube.com/watch?v=Qe2FbGuIeoE
