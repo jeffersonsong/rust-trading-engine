@@ -117,13 +117,14 @@ impl Limit {
 
 #[derive(Debug)]
 pub struct Order {
+    id: u64,
     size: f64,
     bid_or_ask: BidOrAsk,
 }
 
 impl Order {
-    pub fn new(bid_or_ask: BidOrAsk, size: f64) -> Order {
-        Order { bid_or_ask, size }
+    pub fn new(id: u64, bid_or_ask: BidOrAsk, size: f64) -> Order {
+        Order { id, bid_or_ask, size }
     }
 
     pub fn is_filled(&self) -> bool {
@@ -140,12 +141,12 @@ pub mod tests {
     #[test]
     fn orderbook_fill_market_order_ask() {
         let mut orderbook = OrderBook::new();
-        orderbook.add_limit_order(dec!(500), Order::new(BidOrAsk::Ask, 10.0));
-        orderbook.add_limit_order(dec!(100), Order::new(BidOrAsk::Ask, 10.0));
-        orderbook.add_limit_order(dec!(200), Order::new(BidOrAsk::Ask, 10.0));
-        orderbook.add_limit_order(dec!(300), Order::new(BidOrAsk::Ask, 10.0));
+        orderbook.add_limit_order(dec!(500), Order::new(1, BidOrAsk::Ask, 10.0));
+        orderbook.add_limit_order(dec!(100), Order::new(2, BidOrAsk::Ask, 10.0));
+        orderbook.add_limit_order(dec!(200), Order::new(3, BidOrAsk::Ask, 10.0));
+        orderbook.add_limit_order(dec!(300), Order::new(4, BidOrAsk::Ask, 10.0));
 
-        let mut market_order = Order::new(BidOrAsk::Bid, 10.0);
+        let mut market_order = Order::new(5, BidOrAsk::Bid, 10.0);
         orderbook.fill_market_order(&mut market_order);
 
         let ask_limits = orderbook.ask_limits();
@@ -163,8 +164,8 @@ pub mod tests {
         let price = dec!(10_000.0);
         let mut limit = Limit::new(price);
 
-        let buy_limit_order_a = Order::new(BidOrAsk::Bid, 100.0);
-        let buy_limit_order_b = Order::new(BidOrAsk::Bid, 100.0);
+        let buy_limit_order_a = Order::new(1, BidOrAsk::Bid, 100.0);
+        let buy_limit_order_b = Order::new(2, BidOrAsk::Bid, 100.0);
         limit.add_order(buy_limit_order_a);
         limit.add_order(buy_limit_order_b);
 
@@ -178,12 +179,12 @@ pub mod tests {
         let price = dec!(10_000.0);
         let mut limit = Limit::new(price);
 
-        let buy_limit_order_a = Order::new(BidOrAsk::Bid, 100.0);
-        let buy_limit_order_b = Order::new(BidOrAsk::Bid, 100.0);
+        let buy_limit_order_a = Order::new(1, BidOrAsk::Bid, 100.0);
+        let buy_limit_order_b = Order::new(2, BidOrAsk::Bid, 100.0);
         limit.add_order(buy_limit_order_a);
         limit.add_order(buy_limit_order_b);
 
-        let mut market_sell_order = Order::new(BidOrAsk::Ask, 199.0);
+        let mut market_sell_order = Order::new(3, BidOrAsk::Ask, 199.0);
         limit.fill_order(&mut market_sell_order);
 
         assert!(market_sell_order.is_filled());
@@ -197,10 +198,10 @@ pub mod tests {
         let price = dec!(10_000.0);
         let mut limit = Limit::new(price);
 
-        let buy_limit_order = Order::new(BidOrAsk::Bid, 100.0);
+        let buy_limit_order = Order::new(1, BidOrAsk::Bid, 100.0);
         limit.add_order(buy_limit_order);
 
-        let mut market_sell_order = Order::new(BidOrAsk::Ask, 99.0);
+        let mut market_sell_order = Order::new(2, BidOrAsk::Ask, 99.0);
         limit.fill_order(&mut market_sell_order);
 
         println!("{:?}", limit);
