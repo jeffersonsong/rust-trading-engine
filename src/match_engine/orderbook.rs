@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 use rust_decimal::prelude::*;
-use std::collections::HashMap;
+use std::collections::{HashMap, LinkedList};
 
 #[derive(Debug)]
 pub enum BidOrAsk {
@@ -78,14 +78,14 @@ impl OrderBook {
 #[derive(Debug)]
 struct Limit {
     price: Decimal,
-    orders: Vec<Order>,
+    orders: LinkedList<Order>,
 }
 
 impl Limit {
     fn new(price: Decimal) -> Limit {
         Limit {
             price,
-            orders: Vec::new(),
+            orders: LinkedList::new(),
         }
     }
 
@@ -94,26 +94,24 @@ impl Limit {
     }
 
     fn fill_order(&mut self, market_order: &mut Order) {
-        for limit_order in self.orders.iter_mut() {
+        while !market_order.is_filled() && !self.orders.is_empty() {
+            let mut limit_order = self.orders.front_mut().unwrap();
             match market_order.size >= limit_order.size {
                 true => {
                     market_order.size -= limit_order.size;
                     limit_order.size = 0.0;
+                    self.orders.pop_front();
                 }
                 false => {
                     limit_order.size -= market_order.size;
                     market_order.size = 0.0;
                 }
             }
-
-            if market_order.is_filled() {
-                break;
-            }
         }
     }
 
     fn add_order(&mut self, order: Order) {
-        self.orders.push(order);
+        self.orders.push_back(order);
     }
 }
 
@@ -155,8 +153,7 @@ pub mod tests {
         assert_eq!(matched_limit.price, dec!(100));
         assert!(market_order.is_filled());
 
-        let matched_order = matched_limit.orders.get(0).unwrap();
-        assert!(matched_order.is_filled());
+        assert!(matched_limit.orders.is_empty());
 
         println!("{:?}", orderbook.ask_limits());
     }
@@ -172,6 +169,8 @@ pub mod tests {
         limit.add_order(buy_limit_order_b);
 
         assert_eq!(limit.total_volume(), 200.0);
+
+        println!("{:?}", limit);
     }
 
     #[test]
@@ -188,9 +187,7 @@ pub mod tests {
         limit.fill_order(&mut market_sell_order);
 
         assert!(market_sell_order.is_filled());
-        assert!(limit.orders.get(0).unwrap().is_filled());
-        assert!(!limit.orders.get(1).unwrap().is_filled());
-        assert_eq!(limit.orders.get(1).unwrap().size, 1.0);
+        assert_eq!(limit.orders.front().unwrap().size, 1.0);
 
         println!("{:?}", limit);
     }
@@ -206,9 +203,9 @@ pub mod tests {
         let mut market_sell_order = Order::new(BidOrAsk::Ask, 99.0);
         limit.fill_order(&mut market_sell_order);
 
-        // println!("{:?}", limit);
+        println!("{:?}", limit);
 
         assert!(market_sell_order.is_filled());
-        assert_eq!(limit.orders.get(0).unwrap().size, 1.0);
+        assert_eq!(limit.orders.front().unwrap().size, 1.0);
     }
 }
