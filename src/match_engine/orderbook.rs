@@ -60,9 +60,8 @@ impl OrderBook {
         let mut limits: Vec<&mut Limit> = match limit_price {
             Some(limit_price) => self
                 .asks
-                .iter_mut()
-                .filter(|e| *e.0 <= limit_price)
-                .map(|e| e.1)
+                .values_mut()
+                .filter(|limit| limit.price <= limit_price)
                 .collect::<Vec<&mut Limit>>(),
             None => self.asks.values_mut().collect::<Vec<&mut Limit>>(),
         };
@@ -75,9 +74,8 @@ impl OrderBook {
         let mut limits = match limit_price {
             Some(limit_price) => self
                 .bids
-                .iter_mut()
-                .filter(|e| *e.0 >= limit_price)
-                .map(|e| e.1)
+                .values_mut()
+                .filter(|limit| limit.price >= limit_price)
                 .collect::<Vec<&mut Limit>>(),
             None => self.bids.values_mut().collect::<Vec<&mut Limit>>(),
         };
