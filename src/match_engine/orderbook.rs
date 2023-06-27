@@ -22,7 +22,7 @@ impl OrderBook {
         }
     }
 
-    pub fn fill_market_order(&mut self, market_order: &mut Order) { 
+    pub fn fill_market_order(&mut self, market_order: &mut Order) {
         // Vec = >matches
         let limits = match market_order.bid_or_ask {
             BidOrAsk::Bid => self.ask_limits(),
@@ -38,9 +38,9 @@ impl OrderBook {
         }
     }
 
-    // BID (BUY Order) => ASKS => sorted cheapest price    
+    // BID (BUY Order) => ASKS => sorted cheapest price
     pub fn ask_limits(&mut self) -> Vec<&mut Limit> {
-        let mut limits  = self.asks.values_mut().collect::<Vec<&mut Limit>>();
+        let mut limits = self.asks.values_mut().collect::<Vec<&mut Limit>>();
         limits.sort_by(|a, b| a.price.cmp(&b.price));
 
         limits
@@ -48,7 +48,7 @@ impl OrderBook {
 
     // ASK (SELL Order) => BIDS => sorted highest price
     pub fn bid_limits(&mut self) -> Vec<&mut Limit> {
-        let mut limits  =self.bids.values_mut().collect::<Vec<&mut Limit>>();
+        let mut limits = self.bids.values_mut().collect::<Vec<&mut Limit>>();
         limits.sort_by(|a, b| b.price.cmp(&a.price));
         limits
     }
