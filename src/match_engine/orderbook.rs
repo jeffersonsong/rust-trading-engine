@@ -127,22 +127,20 @@ impl Limit {
         let mut executions = Vec::new();
         while !market_order.is_filled() && !self.orders.is_empty() {
             let mut limit_order = self.orders.front_mut().unwrap();
-            match market_order.size >= limit_order.size {
-                true => {
-                    executions.push(Execution::new(market_order, limit_order.size, self.price));
-                    executions.push(Execution::new(limit_order, limit_order.size, self.price));
 
-                    market_order.size -= limit_order.size;
-                    limit_order.size = 0.0;
-                    self.orders.pop_front();
-                }
-                false => {
-                    executions.push(Execution::new(market_order, market_order.size, self.price));
-                    executions.push(Execution::new(limit_order, market_order.size, self.price));
+            let shares = if market_order.size >= limit_order.size {
+                limit_order.size
+            } else {
+                market_order.size
+            };
+            executions.push(Execution::new(market_order, shares, self.price));
+            executions.push(Execution::new(limit_order, shares, self.price));
 
-                    limit_order.size -= market_order.size;
-                    market_order.size = 0.0;
-                }
+            market_order.size -= shares;
+            limit_order.size -= shares;
+
+            if limit_order.is_filled() {
+                self.orders.pop_front();
             }
         }
 
