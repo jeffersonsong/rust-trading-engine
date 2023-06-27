@@ -56,7 +56,7 @@ impl OrderBook {
     }
 
     // BID (BUY Order) => ASKS => sorted cheapest price
-    pub fn ask_limits(&mut self, limit_price: Option<Decimal>) -> Vec<&mut Limit> {
+    fn ask_limits(&mut self, limit_price: Option<Decimal>) -> Vec<&mut Limit> {
         let mut limits: Vec<&mut Limit> = match limit_price {
             Some(limit_price) => self
                 .asks
@@ -71,7 +71,7 @@ impl OrderBook {
     }
 
     // ASK (SELL Order) => BIDS => sorted highest price
-    pub fn bid_limits(&mut self, limit_price: Option<Decimal>) -> Vec<&mut Limit> {
+    fn bid_limits(&mut self, limit_price: Option<Decimal>) -> Vec<&mut Limit> {
         let mut limits = match limit_price {
             Some(limit_price) => self
                 .bids

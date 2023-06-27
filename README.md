@@ -1,3 +1,7 @@
+# Rust Trading Engine. 
+
+Matching engine built upon following tutorial
+
 Rust For Beginners: Let's Build A Trading Engine
 by Anthony GG
 
